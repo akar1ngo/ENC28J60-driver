@@ -14,6 +14,7 @@ defmt = "1.0"
 defmt-rtt = "1.1"
 embedded-hal = "1.0"
 embedded-hal-bus = "0.3"
+enc28j60 = { path = "./enc28j60" }
 panic-probe = "1"
 
 [workspace.dependencies.stm32f4xx-hal]
