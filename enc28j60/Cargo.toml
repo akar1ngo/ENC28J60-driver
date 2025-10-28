@@ -1,0 +1,9 @@
+[package]
+name = "enc28j60"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+embedded-hal.workspace = true
+cortex-m.workspace = true
