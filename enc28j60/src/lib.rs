@@ -3,6 +3,8 @@
 #[macro_use]
 mod macros;
 
+#[cfg(feature = "simple-network")]
+mod adapter;
 pub mod register;
 mod spi_device;
 

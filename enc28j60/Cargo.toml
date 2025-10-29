@@ -6,4 +6,8 @@ publish.workspace = true
 
 [dependencies]
 embedded-hal.workspace = true
-cortex-m.workspace = true
+simple-network = { workspace = true, optional = true }
+
+[features]
+default = []
+simple-network = ["dep:simple-network"]

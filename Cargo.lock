@@ -189,8 +189,8 @@ checksum = "a21dea9854beb860f3062d10228ce9b976da520a73474aed3171ec276bc0c032"
 name = "enc28j60"
 version = "0.1.0"
 dependencies = [
- "cortex-m",
  "embedded-hal 1.0.0",
+ "simple-network",
 ]
 
 [[package]]
