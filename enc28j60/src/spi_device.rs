@@ -216,7 +216,7 @@ where
         }
     }
 
-    pub fn write_control(&mut self, reg: ControlRegister, data: u8) -> Result<(), SPI::Error> {
+    fn write_control(&mut self, reg: ControlRegister, data: u8) -> Result<(), SPI::Error> {
         if let Some(bank) = reg.bank()
             && self.current_bank != bank
         {
@@ -249,7 +249,7 @@ where
         self.read_u16(MIRDL, MIRDH)
     }
 
-    pub fn write_phy(&mut self, reg: PhyRegister, data: u16) -> Result<(), SPI::Error> {
+    fn write_phy(&mut self, reg: PhyRegister, data: u16) -> Result<(), SPI::Error> {
         // 1. Write address to MIREGADR
         self.write_control(MIREGADR, reg.addr())?;
 
