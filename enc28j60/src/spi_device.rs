@@ -309,7 +309,7 @@ where
 
         // Decrement the packet count by setting ECON1.PKTDEC
         const PKTDEC_MASK: u8 = 0b0100_0000;
-        let cmd = [ECON1.opcode(Op::BFS), PKTDEC_MASK];
+        let cmd = [ECON2.opcode(Op::BFS), PKTDEC_MASK];
         self.spi.write(&cmd)?;
 
         Ok(copy_len)
