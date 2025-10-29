@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["enc28j60", "stm32f4-example"]
+members = ["enc28j60", "simple-network", "stm32f4-example"]
 
 [workspace.package]
 version = "0.1.0"
