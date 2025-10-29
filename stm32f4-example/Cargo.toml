@@ -13,6 +13,7 @@ cortex-m-rt.workspace = true
 defmt.workspace = true
 defmt-rtt.workspace = true
 embedded-hal-bus.workspace = true
-enc28j60.workspace = true
+enc28j60 = { workspace = true, features = ["simple-network"] }
 panic-probe.workspace = true
+simple-network.workspace = true
 stm32f4xx-hal.workspace = true

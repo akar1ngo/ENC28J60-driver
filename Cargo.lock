@@ -396,6 +396,7 @@ dependencies = [
  "embedded-hal-bus",
  "enc28j60",
  "panic-probe",
+ "simple-network",
  "stm32f4xx-hal",
 ]
 

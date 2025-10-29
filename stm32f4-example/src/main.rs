@@ -6,6 +6,7 @@ use defmt_rtt as _;
 use embedded_hal_bus::spi::ExclusiveDevice;
 use hal::prelude::*;
 use panic_probe as _;
+use simple_network::SimpleNetwork;
 use stm32f4xx_hal::{self as hal, hal_02::spi::MODE_0, rcc::Config, spi::Spi};
 
 use enc28j60::{Enc28j60, register};
@@ -70,7 +71,48 @@ fn main() -> ! {
     let estat_val = enc.read_control(register::ESTAT).unwrap_or(0xFF);
     defmt::info!("ESTAT={:?}", estat_val);
 
+    let mut buf = [0u8; 1518];
     loop {
-        cortex_m::asm::delay(16_000_000);
+        cortex_m::asm::delay(1_000_000);
+        match enc.read_control(register::EPKTCNT) {
+            Ok(count) => {
+                if orange_led.is_set_high() {
+                    orange_led.set_low();
+                }
+                if count > 0 {
+                    blue_led.set_high();
+                    analyze_ether_frame(&mut enc, &mut buf);
+                    blue_led.set_low();
+                }
+            }
+            Err(_) => orange_led.set_high(),
+        }
+    }
+}
+
+fn analyze_ether_frame(snp: &mut impl SimpleNetwork, buf: &mut [u8]) {
+    match snp.receive(buf) {
+        Ok(n) => {
+            defmt::info!("Received {} bytes", n);
+
+            let dst = &buf[0..6];
+            let src = &buf[6..12];
+            let typ = &buf[12..14];
+            // let dat = &buf[14..n];
+            defmt::debug!(
+                r#"Frame layout of packet:
+     Source MAC: {:#x}
+Destination MAC: {:#x}
+     Ether Type: {:#x}
+    Data Length: {} bytes"#,
+                src,
+                dst,
+                typ,
+                n - 14
+            );
+        }
+        Err(_) => {
+            defmt::error!("Error receiving packet");
+        }
     }
 }
