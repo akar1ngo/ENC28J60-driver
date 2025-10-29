@@ -331,12 +331,13 @@ where
         Ok(copy_len)
     }
 
-    /// Transmit a packet with the given source MAC, destination MAC, and data payload.
+    /// Transmit a packet with the given source MAC, destination MAC, EtherType, and data payload.
     /// The data should include the EtherType/Length field and payload.
     pub fn transmit(
         &mut self,
         dst: &[u8; 6],
         src: &[u8; 6],
+        ether_type: u16,
         data: &[u8],
     ) -> Result<(), SPI::Error> {
         // 1a. Read current ETXST to know where to write
@@ -352,8 +353,9 @@ where
         // 2b. Write the Ethernet frame header
         self.mem_write(dst)?;
         self.mem_write(src)?;
+        self.mem_write(&ether_type.to_be_bytes())?;
 
-        // 2c. Write the data (should include EtherType + payload)
+        // 2c. Write the data
         self.mem_write(data)?;
 
         // 3. Appropriately program the ETXND Pointer.
