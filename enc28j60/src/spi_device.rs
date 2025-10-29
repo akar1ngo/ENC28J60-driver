@@ -40,11 +40,8 @@ where
         }
     }
 
-    pub fn initialize(&mut self) -> Result<(), SPI::Error> {
-        // TODO: the proper `delay` method needs access to a timer, but the driver should not take
-        // ownership of it. Look into passing a mutable reference to a delay object in the future.
-        self.reset_via_spi()?;
-        cortex_m::asm::delay(1_000_000);
+    pub fn initialize<D: DelayNs>(&mut self, delay: &mut D) -> Result<(), SPI::Error> {
+        self.reset_via_spi(delay)?;
 
         let revision = self.read_control(EREVID).unwrap_or(0xff);
 
@@ -169,10 +166,16 @@ where
     /// There may be other SPI commands in progress, so the reset is not immediate. If you need
     /// an immediate reset, use the `reset` function.
     ///
-    pub fn reset_via_spi(&mut self) -> Result<(), SPI::Error> {
+    pub fn reset_via_spi<D: DelayNs>(&mut self, delay: &mut D) -> Result<(), SPI::Error> {
         // Unlike other SPI commands, the SRC is only a single byte command and does not operate on
         // any register.
-        self.spi.write(&[0xFF])
+        self.spi.write(&[0xFF])?;
+
+        // Apply workaround from errata sheet: "After issuing the [SPI] Reset command, wait at
+        // least 1ms in firmware for the device to be ready."
+        delay.delay_ms(1);
+
+        Ok(())
     }
 
     fn ensure_autoinc(&mut self) -> Result<(), SPI::Error> {

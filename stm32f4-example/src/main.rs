@@ -65,7 +65,8 @@ fn main() -> ! {
     let estat_val = enc.read_control(register::ESTAT).unwrap_or(0xFF);
     defmt::info!("ESTAT={:?}", estat_val);
 
-    enc.initialize().expect("initialize");
+    let mut dly = dp.TIM2.delay_us(&mut rcc);
+    enc.initialize(&mut dly).expect("initialize");
     let estat_val = enc.read_control(register::ESTAT).unwrap_or(0xFF);
     defmt::info!("ESTAT={:?}", estat_val);
 
