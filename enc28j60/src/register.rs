@@ -72,75 +72,6 @@ pub enum Op {
     BFC = 0b101_00000,
 }
 
-//
-// Global Registers
-//
-pub const EIE: ControlRegister = ControlRegister::global(0x1b);
-pub const EIR: ControlRegister = ControlRegister::global(0x1c);
-pub const ESTAT: ControlRegister = ControlRegister::global(0x1d);
-pub const ECON2: ControlRegister = ControlRegister::global(0x1e);
-pub const ECON1: ControlRegister = ControlRegister::global(0x1f);
-
-//
-// Bank 0 registers
-//
-pub const ERDPTL: ControlRegister = ControlRegister::banked(0x00, Bank::Bank0, Block::Eth);
-pub const ERDPTH: ControlRegister = ControlRegister::banked(0x01, Bank::Bank0, Block::Eth);
-pub const EWRPTL: ControlRegister = ControlRegister::banked(0x02, Bank::Bank0, Block::Eth);
-pub const EWRPTH: ControlRegister = ControlRegister::banked(0x03, Bank::Bank0, Block::Eth);
-pub const ETXSTL: ControlRegister = ControlRegister::banked(0x04, Bank::Bank0, Block::Eth);
-pub const ETXSTH: ControlRegister = ControlRegister::banked(0x05, Bank::Bank0, Block::Eth);
-pub const ETXNDL: ControlRegister = ControlRegister::banked(0x06, Bank::Bank0, Block::Eth);
-pub const ETXNDH: ControlRegister = ControlRegister::banked(0x07, Bank::Bank0, Block::Eth);
-pub const ERXSTL: ControlRegister = ControlRegister::banked(0x08, Bank::Bank0, Block::Eth);
-pub const ERXSTH: ControlRegister = ControlRegister::banked(0x09, Bank::Bank0, Block::Eth);
-pub const ERXNDL: ControlRegister = ControlRegister::banked(0x0a, Bank::Bank0, Block::Eth);
-pub const ERXNDH: ControlRegister = ControlRegister::banked(0x0b, Bank::Bank0, Block::Eth);
-pub const ERXRDPTL: ControlRegister = ControlRegister::banked(0x0c, Bank::Bank0, Block::Eth);
-pub const ERXRDPTH: ControlRegister = ControlRegister::banked(0x0d, Bank::Bank0, Block::Eth);
-pub const ERXWRPTL: ControlRegister = ControlRegister::banked(0x0e, Bank::Bank0, Block::Eth);
-pub const ERXWRPTH: ControlRegister = ControlRegister::banked(0x0f, Bank::Bank0, Block::Eth);
-
-//
-// Bank 1 registers
-//
-pub const ERXFCON: ControlRegister = ControlRegister::banked(0x18, Bank::Bank1, Block::Eth);
-pub const EPKTCNT: ControlRegister = ControlRegister::banked(0x19, Bank::Bank1, Block::Eth);
-
-//
-// Bank 2 registers
-//
-pub const MACON1: ControlRegister = ControlRegister::banked(0x00, Bank::Bank2, Block::Mac);
-pub const MACON3: ControlRegister = ControlRegister::banked(0x02, Bank::Bank2, Block::Mac);
-pub const MACON4: ControlRegister = ControlRegister::banked(0x03, Bank::Bank2, Block::Mac);
-pub const MABBIPG: ControlRegister = ControlRegister::banked(0x04, Bank::Bank2, Block::Mac);
-pub const MAIPGL: ControlRegister = ControlRegister::banked(0x06, Bank::Bank2, Block::Mac);
-pub const MAIPGH: ControlRegister = ControlRegister::banked(0x07, Bank::Bank2, Block::Mac);
-pub const MAMXFLL: ControlRegister = ControlRegister::banked(0x0a, Bank::Bank2, Block::Mac);
-pub const MAMXFLH: ControlRegister = ControlRegister::banked(0x0b, Bank::Bank2, Block::Mac);
-pub const MICMD: ControlRegister = ControlRegister::banked(0x12, Bank::Bank2, Block::Mii);
-pub const MIREGADR: ControlRegister = ControlRegister::banked(0x14, Bank::Bank2, Block::Mii);
-pub const MIWRL: ControlRegister = ControlRegister::banked(0x16, Bank::Bank2, Block::Mii);
-pub const MIWRH: ControlRegister = ControlRegister::banked(0x17, Bank::Bank2, Block::Mii);
-pub const MIRDL: ControlRegister = ControlRegister::banked(0x18, Bank::Bank2, Block::Mii);
-pub const MIRDH: ControlRegister = ControlRegister::banked(0x19, Bank::Bank2, Block::Mii);
-
-//
-// Bank 3 registers
-//
-pub const MAADR5: ControlRegister = ControlRegister::banked(0x00, Bank::Bank3, Block::Mac);
-pub const MAADR6: ControlRegister = ControlRegister::banked(0x01, Bank::Bank3, Block::Mac);
-pub const MAADR3: ControlRegister = ControlRegister::banked(0x02, Bank::Bank3, Block::Mac);
-pub const MAADR4: ControlRegister = ControlRegister::banked(0x03, Bank::Bank3, Block::Mac);
-pub const MAADR1: ControlRegister = ControlRegister::banked(0x04, Bank::Bank3, Block::Mac);
-pub const MAADR2: ControlRegister = ControlRegister::banked(0x05, Bank::Bank3, Block::Mac);
-pub const MISTAT: ControlRegister = ControlRegister::banked(0x0A, Bank::Bank3, Block::Mii);
-pub const EREVID: ControlRegister = ControlRegister::banked(0x12, Bank::Bank3, Block::Eth);
-
-//
-// PHY Registers
-//
-
 #[derive(Clone, Copy)]
 pub struct PhyRegister {
     addr: u8,
@@ -157,21 +88,93 @@ impl PhyRegister {
     }
 }
 
-/// PHY Control Register 1
-pub const PHCON1: PhyRegister = PhyRegister::new(0x00);
-/// PHY Status Register 1
-pub const PHSTAT1: PhyRegister = PhyRegister::new(0x01);
-/// PHY Identifier Register 1
-pub const PHID1: PhyRegister = PhyRegister::new(0x02);
-/// PHY Identifier Register 2
-pub const PHID2: PhyRegister = PhyRegister::new(0x03);
-/// PHY Control Register 2
-pub const PHCON2: PhyRegister = PhyRegister::new(0x10);
-/// PHY Status Register 2
-pub const PHSTAT2: PhyRegister = PhyRegister::new(0x11);
-/// PHY Interrupt Enable Register
-pub const PHIE: PhyRegister = PhyRegister::new(0x12);
-/// PHY Interrupt Request Register
-pub const PHIR: PhyRegister = PhyRegister::new(0x13);
-/// PHY LED Control Register
-pub const PHLCON: PhyRegister = PhyRegister::new(0x14);
+const fn bank_from_u8(bank: u8) -> Bank {
+    match bank {
+        0 => Bank::Bank0,
+        1 => Bank::Bank1,
+        2 => Bank::Bank2,
+        3 => Bank::Bank3,
+        _ => panic!("invalid bank number"),
+    }
+}
+
+#[rustfmt::skip]
+control_registers![
+    //
+    // Global registers
+    //
+    (EIE,   0x1b),
+    (EIR,   0x1c),
+    (ESTAT, 0x1d),
+    (ECON2, 0x1e),
+    (ECON1, 0x1f),
+
+    //
+    // Bank 0 registers
+    //
+    (ERDPTL,   0x00, 0, Eth),
+    (ERDPTH,   0x01, 0, Eth),
+    (EWRPTL,   0x02, 0, Eth),
+    (EWRPTH,   0x03, 0, Eth),
+    (ETXSTL,   0x04, 0, Eth),
+    (ETXSTH,   0x05, 0, Eth),
+    (ETXNDL,   0x06, 0, Eth),
+    (ETXNDH,   0x07, 0, Eth),
+    (ERXSTL,   0x08, 0, Eth),
+    (ERXSTH,   0x09, 0, Eth),
+    (ERXNDL,   0x0a, 0, Eth),
+    (ERXNDH,   0x0b, 0, Eth),
+    (ERXRDPTL, 0x0c, 0, Eth),
+    (ERXRDPTH, 0x0d, 0, Eth),
+    (ERXWRPTL, 0x0e, 0, Eth),
+    (ERXWRPTH, 0x0f, 0, Eth),
+
+    //
+    // Bank 1 registers
+    //
+    (ERXFCON, 0x18, 1, Eth),
+    (EPKTCNT, 0x19, 1, Eth),
+
+    //
+    // Bank 2 registers
+    //
+    (MACON1,   0x00, 2, Mac),
+    (MACON3,   0x02, 2, Mac),
+    (MACON4,   0x03, 2, Mac),
+    (MABBIPG,  0x04, 2, Mac),
+    (MAIPGL,   0x06, 2, Mac),
+    (MAIPGH,   0x07, 2, Mac),
+    (MAMXFLL,  0x0a, 2, Mac),
+    (MAMXFLH,  0x0b, 2, Mac),
+    (MICMD,    0x12, 2, Mii),
+    (MIREGADR, 0x14, 2, Mii),
+    (MIWRL,    0x16, 2, Mii),
+    (MIWRH,    0x17, 2, Mii),
+    (MIRDL,    0x18, 2, Mii),
+    (MIRDH,    0x19, 2, Mii),
+
+    //
+    // Bank 3 registers
+    //
+    (MAADR5, 0x00, 3, Mac),
+    (MAADR6, 0x01, 3, Mac),
+    (MAADR3, 0x02, 3, Mac),
+    (MAADR4, 0x03, 3, Mac),
+    (MAADR1, 0x04, 3, Mac),
+    (MAADR2, 0x05, 3, Mac),
+    (MISTAT, 0x0a, 3, Mii),
+    (EREVID, 0x12, 3, Eth),
+];
+
+#[rustfmt::skip]
+phy_registers![
+    (PHCON1,   0x00),
+    (PHSTAT1,  0x01),
+    (PHID1,    0x02),
+    (PHID2,    0x03),
+    (PHCON2,   0x10),
+    (PHSTAT2,  0x11),
+    (PHIE,     0x12),
+    (PHIR,     0x13),
+    (PHLCON,   0x14),
+];
