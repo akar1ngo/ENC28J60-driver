@@ -1,3 +1,5 @@
+use core::cmp::min;
+
 use embedded_hal::delay::DelayNs;
 use embedded_hal::digital::{InputPin, OutputPin};
 use embedded_hal::spi::{Operation, SpiDevice};
@@ -17,6 +19,9 @@ pub struct Enc28j60<SPI: SpiDevice, INT: InputPin, RST: OutputPin> {
 
     /// Current bank,
     current_bank: Bank,
+
+    /// Next packet pointer,
+    next_packet: u16,
 }
 
 impl<SPI, INT, RST> Enc28j60<SPI, INT, RST>
@@ -31,6 +36,7 @@ where
             int,
             reset,
             current_bank: Bank::Bank0,
+            next_packet: 0,
         }
     }
 
@@ -73,6 +79,7 @@ where
             // For tracking purposes, the ERXRDPT registers should additionally be programmed with
             // the same value.
             self.write_u16(ERXRDPTL, ERXRDPTH, RX_START)?;
+            self.next_packet = RX_START;
 
             // No explicit action is required to initialize the transmission buffer.
             self.write_u16(ETXSTL, ETXSTH, TX_START)?;
@@ -262,6 +269,9 @@ where
             return Ok(0);
         }
 
+        // Start reading from the beginning of the next Packet Pointer
+        self.write_u16(ERDPTL, ERDPTH, self.next_packet)?;
+
         // Read the receive status vector (6 bytes)
         // Format: [next_packet_ptr(2), byte_count(2), status(2)]
         let mut rsv = [0u8; 6];
@@ -273,24 +283,27 @@ where
 
         // The byte count includes the 4-byte CRC, so subtract it for payload length
         let payload_len = byte_count.saturating_sub(4);
-        let copy_len = core::cmp::min(payload_len, buf.len());
+        let copy_len = min(payload_len, buf.len());
 
         // Read the packet payload into the buffer
         if copy_len > 0 {
             self.mem_read(&mut buf[..copy_len])?;
+        }
 
-            // If the packet is larger than our buffer, we need to skip the remaining bytes
-            // to properly advance the memory read pointer
-            if payload_len > copy_len {
-                let mut remaining = payload_len - copy_len;
-                let mut dummy = [0u8; 64];
-                while remaining > 0 {
-                    let chunk_size = core::cmp::min(remaining, dummy.len());
-                    self.mem_read(&mut dummy[..chunk_size])?;
-                    remaining -= chunk_size;
-                }
+        // Packet is larger than buffer
+        // Skip the remaining bytes in order to properly advance the read pointer
+        if payload_len > copy_len {
+            let mut remaining = payload_len - copy_len;
+            let mut dummy = [0u8; 64];
+            while remaining > 0 {
+                let chunk_size = min(remaining, dummy.len());
+                self.mem_read(&mut dummy[..chunk_size])?;
+                remaining -= chunk_size;
             }
         }
+
+        // From data sheet: "The host controller will save the next Packet Pointer ..."
+        self.next_packet = next_packet;
 
         // Update ERXRDPT to free the memory used by this packet
         // ERXRDPT should point to the byte before the next packet's start
@@ -307,7 +320,7 @@ where
 
         self.write_u16(ERXRDPTL, ERXRDPTH, new_rdpt)?;
 
-        // Decrement the packet count by setting ECON1.PKTDEC
+        // Decrement the packet count by setting ECON2.PKTDEC
         const PKTDEC_MASK: u8 = 0b0100_0000;
         let cmd = [ECON2.opcode(Op::BFS), PKTDEC_MASK];
         self.spi.write(&cmd)?;
